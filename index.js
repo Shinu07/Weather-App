@@ -7,6 +7,7 @@ const searchBox = document.querySelector(".search input");
 const searchBtn = document.querySelector(".search button");
 const weatherIcon = document.querySelector(".weather-icon");
 const weatherDisplay = document.querySelector(".weather");
+const card = document.querySelector(".card");
 const errorMessage = document.querySelector(".error-message");
 
 async function checkWeather(city) {
@@ -30,7 +31,8 @@ function updateWeatherDisplay(data) {
     document.querySelector(".temp").innerHTML = Math.round(data.main.temp) + "°C";
     document.querySelector(".humidity").innerHTML = data.main.humidity + "%";
     document.querySelector(".wind").innerHTML = data.wind.speed + " km/h";
-
+    
+    card.style.boxShadow = "2px 1px 35px 1px rgba(0,175,255,1)";
     setWeatherIcon(data.weather[0].main);
     weatherDisplay.style.display = "block";
 }
@@ -64,6 +66,7 @@ function clearErrorMessage() {
 
 searchBtn.addEventListener('click', () => {
     checkWeather(searchBox.value);
+    
 });
 
 searchBox.addEventListener('keypress', (event) => {
