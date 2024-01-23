@@ -1,42 +1,74 @@
-const API_KEY = `3265874a2c77ae4a04bb96236a642d2f`
-const form = document.querySelector("form")
-const search = document.querySelector("#search")
-const weather = document.querySelector("#weather")
-    
-const getWeather = async(city) => {
-    weather.innerHTML = `<h2> Loading... <h2>`
-    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`
-    const response = await fetch(url);
-    const data = await response.json();
-    return showWeather(data),console.log(data);
+
+const API_KEY = 'd06f674efc4629982063135b6f4dc817';
+const baseURL = 'https://api.openweathermap.org/data/2.5/weather?&units=metric&q=';
+const urlWithApiKey = (city) => `${baseURL}${city}&appid=${API_KEY}`;
+
+const searchBox = document.querySelector(".search input");
+const searchBtn = document.querySelector(".search button");
+const weatherIcon = document.querySelector(".weather-icon");
+const weatherDisplay = document.querySelector(".weather");
+const errorMessage = document.querySelector(".error-message");
+
+async function checkWeather(city) {
+    try {
+        const response = await fetch(urlWithApiKey(city));
+        if (!response.ok) {
+            throw new Error('City not found');
+        }
+
+        const data = await response.json();
+        updateWeatherDisplay(data);
+        clearErrorMessage();
+    } catch (error) {
+        console.error('Error fetching weather:', error.message);
+        displayErrorMessage('City not found. Please enter a valid city.');
+    }
 }
 
-const showWeather = (data) => {
-    if (data.cod == "404") {
-        weather.innerHTML = `<h2> City Not Found <h2>`
-        return;
-    }
-    weather.innerHTML = `
-    <div class="weatherResult ">
-        <div>
-            <img src="https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png" alt="">
-        </div>
-        <div>
-            <h2>Temprature: ${data.main.temp} ℃</h2>
-            <h4>Weather: ${data.weather[0].main} </h4>
-            <h7>Humidity: ${data.main.humidity}%</h7>
-            <br>
-            <h7>Wind Speed: ${data.wind.speed}km/hr</h7>
-          
-        </div>
-    </div>
-        `
+function updateWeatherDisplay(data) {
+    document.querySelector(".city").innerHTML = data.name;
+    document.querySelector(".temp").innerHTML = Math.round(data.main.temp) + "°C";
+    document.querySelector(".humidity").innerHTML = data.main.humidity + "%";
+    document.querySelector(".wind").innerHTML = data.wind.speed + " km/h";
+
+    setWeatherIcon(data.weather[0].main);
+    weatherDisplay.style.display = "block";
 }
 
-form.addEventListener(
-    "submit",
-    function(event) {
-        getWeather(search.value)
-        event.preventDefault()
+function setWeatherIcon(weatherMain) {
+    const weatherIcons = {
+        "Clouds": "clouds.png",
+        "Clear": "clear.png",
+        "Rain": "rain.png",
+        "Drizzle": "drizzle.png",
+        "Humidity": "humidity.png",
+        "Mist": "mist.png",
+        "Wind": "wind.png",
+        "Snow": "snow.png",
+        "Fog": "fog.png"
+    };
+
+    const iconSrc = weatherIcons[weatherMain] || "default.png";
+    weatherIcon.src = `images/${iconSrc}`;
+}
+
+function displayErrorMessage(message) {
+    errorMessage.innerHTML = message;
+    errorMessage.style.display = "block";
+}
+
+function clearErrorMessage() {
+    errorMessage.innerHTML = '';
+    errorMessage.style.display = "none";
+}
+
+searchBtn.addEventListener('click', () => {
+    checkWeather(searchBox.value);
+});
+
+searchBox.addEventListener('keypress', (event) => {
+    if (event.key === 'Enter') {
+        checkWeather(searchBox.value);
     }
-)
+});
+
