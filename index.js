@@ -3,12 +3,12 @@ const API_KEY = 'd06f674efc4629982063135b6f4dc817';
 const baseURL = 'https://api.openweathermap.org/data/2.5/weather?&units=metric&q=';
 const urlWithApiKey = (city) => `${baseURL}${city}&appid=${API_KEY}`;
 
-const searchBox = document.querySelector(".search input");
-const searchBtn = document.querySelector(".search button");
-const weatherIcon = document.querySelector(".weather-icon");
-const weatherDisplay = document.querySelector(".weather");
-const card = document.querySelector(".card");
-const errorMessage = document.querySelector(".error-message");
+const searchBox = document.querySelector(".search input")
+const searchBtn = document.querySelector(".search-button")
+const weatherIcon = document.querySelector(".weather-icon")
+const weatherDisplay = document.querySelector(".weather")
+const card = document.querySelector(".card")
+const errorMessage = document.querySelector(".error-message")
 
 async function checkWeather(city) {
     try {
@@ -16,12 +16,12 @@ async function checkWeather(city) {
         if (!response.ok) {
             throw new Error('City not found');
         }
-
         const data = await response.json();
         updateWeatherDisplay(data);
         clearErrorMessage();
     } catch (error) {
         console.error('Error fetching weather:', error.message);
+        clearWeather()
         displayErrorMessage('City not found. Please enter a valid city.');
     }
 }
@@ -53,6 +53,9 @@ function setWeatherIcon(weatherMain) {
     const iconSrc = weatherIcons[weatherMain] || "default.png";
     weatherIcon.src = `images/${iconSrc}`;
 }
+function clearWeather(){
+        weatherDisplay.style.display = "none";
+    }
 
 function displayErrorMessage(message) {
     errorMessage.innerHTML = message;
@@ -64,14 +67,25 @@ function clearErrorMessage() {
     errorMessage.style.display = "none";
 }
 
-searchBtn.addEventListener('click', () => {
-    checkWeather(searchBox.value);
-    
-});
 
-searchBox.addEventListener('keypress', (event) => {
-    if (event.key === 'Enter') {
-        checkWeather(searchBox.value);
+searchBtn.addEventListener('click',handleSearch);
+searchBox.addEventListener('keypress',handleSearch)
+
+
+function handleSearch(event){
+    if(event.type === "click" || event.key === "Enter"){
+        checkWeather(searchBox.value)
     }
-});
+}
+
+
+
+
+
+
+
+
+
+
+
 
