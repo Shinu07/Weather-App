@@ -32,8 +32,9 @@ function updateWeatherDisplay(data) {
     document.querySelector(".humidity").innerHTML = data.main.humidity + "%";
     document.querySelector(".wind").innerHTML = data.wind.speed + " km/h";
     
-    card.style.boxShadow = "2px 1px 35px 1px rgba(0,175,255,1)";
+     //to show weather icon
     setWeatherIcon(data.weather[0].main);
+    // display the information after a valid city search
     weatherDisplay.style.display = "block";
 }
 
@@ -71,10 +72,9 @@ function clearErrorMessage() {
 searchBtn.addEventListener('click',handleSearch);
 searchBox.addEventListener('keypress',handleSearch)
 
-
 function handleSearch(event){
     if(event.type === "click" || event.key === "Enter"){
-        checkWeather(searchBox.value)
+               checkWeather(searchBox.value)
     }
 }
 
